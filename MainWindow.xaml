@@ -1,0 +1,125 @@
+﻿<Window x:Class="EMotion.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:EMotion"
+        mc:Ignorable="d"
+        Title="EMotion" Height="450" Width="800" Icon="/icon.png">
+    <Window.Resources>
+        <Style x:Key="Hover" BasedOn="{StaticResource BorderRegion}" TargetType="Border">
+            <Setter Property="Effect" Value="{StaticResource EffectShadow2}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Effect" Value="{StaticResource EffectShadow5}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate x:Key="ControllerDefault">
+            <Grid>
+                <Border Style="{StaticResource Hover}" Width="150" Height="200"  Margin="16">
+                    <Border Background="{DynamicResource BorderBrush}"/>
+                </Border>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Margin="0" Text="{Binding Value}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                        <hc:ButtonGroup Grid.Row="1" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ButtonGroupSolid}">
+                            <RadioButton Width="60" HorizontalAlignment="Right" Tag="{Binding Value}" Content="DS4" IsChecked="True" Click="switchGamepad" />
+                            <RadioButton Width="60" HorizontalAlignment="Left" Tag="{Binding Value}" Content="XBOX"  Click="switchGamepad"/>
+                        </hc:ButtonGroup>
+                    </Grid>
+                    <WrapPanel Grid.Row="2" x:Name="connectionStatus" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Label Margin="0,0,0,20" Content="已连接" Style="{DynamicResource LabelSuccess.Small}"></Label>
+                        <Popup x:Name="disconnect" PopupAnimation="Fade" AllowsTransparency="True" PlacementTarget="{Binding ElementName=connectionStatus}" Placement="Top" IsOpen="False">
+                            <Grid>
+                                <Button Style="{StaticResource ButtonDanger}" Tag="{Binding}" Content="断开" Click="disconnectController"></Button>
+                            </Grid>
+                        </Popup>
+                    </WrapPanel>
+                </Grid>
+            </Grid>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True" SourceName="connectionStatus">
+                    <Setter TargetName="disconnect" Property="IsOpen" Value="True"></Setter>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <DataTemplate x:Key="ControllerInput">
+            <Grid>
+                <Border Style="{StaticResource BorderRegion}" Width="150" Height="200" Margin="0,16,0,16" Effect="{StaticResource EffectShadow5}">
+                    <Border Background="{DynamicResource BorderBrush}"/>
+                </Border>
+                <Grid Margin="6.5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <hc:SimpleText Grid.Row="0" TextAlignment="Justify" Margin="55,60,55,0" Text="输入IP地址"/>
+                    <TextBox Grid.Row="1" Width="120" VerticalAlignment="Center"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Margin="25,0,0,50" Style="{StaticResource ButtonSuccess}" Click="confirmInput">确认</Button>
+                        <Button Grid.Column="1" Margin="0,0,25,50" Style="{StaticResource ButtonWarning}" Click="cancelInput">取消</Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="QuickConnectAdd">
+            <Grid>
+                <Border Style="{StaticResource BorderRegion}" Width="150" Height="200" Margin="0,16,0,16" Effect="{StaticResource EffectShadow5}">
+                    <Border Background="{DynamicResource BorderBrush}"/>
+                </Border>
+                <Grid Margin="6.5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <hc:SimpleText Grid.Row="0" TextAlignment="Justify" Margin="55,60,55,0" Text="快速连接"/>
+                    <TextBox Grid.Row="1" Width="120" VerticalAlignment="Center" IsReadOnly="True" Text="{Binding Text, ElementName=ip}"/>
+                    <TextBlock x:Name="ip" Visibility="Hidden" Text="{Binding Value}"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Margin="25,0,0,50" Tag="{Binding}" Style="{StaticResource ButtonSuccess}" Click="quickConnectConfirm">确认</Button>
+                        <Button Grid.Column="1" Margin="0,0,25,50" Tag="{Binding}" Style="{StaticResource ButtonWarning}" Click="cancelQuickConnect">取消</Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ControllerAdd">
+            <Grid>
+                <Border Style="{StaticResource Hover}" Width="150" Height="200" Margin="16">
+                    <Border Background="{DynamicResource BorderBrush}">
+                        <Image Margin="30" Source="/res/img/add.png"/>
+                    </Border>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <hc:ScrollViewer hc:ScrollViewerAttach.Orientation="Horizontal" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" IsInertiaEnabled="True">
+            <ListBox Margin="10" x:Name="controllers" Style="{DynamicResource WrapPanelHorizontalListBox}" SelectionChanged="ListBox_SelectionChanged">
+                <ListBox.ItemTemplateSelector>
+                    <local:ControllerTemplateSelector ControllerDefault="{StaticResource ControllerDefault}" ControllerAdd="{StaticResource ControllerAdd}" ControllerInput="{StaticResource ControllerInput}" QuickConnectAdd="{StaticResource QuickConnectAdd}"/>
+                </ListBox.ItemTemplateSelector>
+            </ListBox>
+        </hc:ScrollViewer>
+    </Grid>
+</Window>
